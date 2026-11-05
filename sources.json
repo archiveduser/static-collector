@@ -19,5 +19,15 @@
     ],
     "exclude": [],
     "enabled": true
+  },
+  {
+    "url": "https://github.com/MetaCubeX/meta-rules-dat.git",
+    "branch": "meta",
+    "destination": "meta-rules-dat",
+    "include": [
+      "geo/geosite"
+    ],
+    "exclude": [],
+    "enabled": true
   }
 ]
