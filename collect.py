@@ -38,8 +38,8 @@ def load_config(path):
         if not isinstance(branch, str) or not branch or branch.startswith('-'):
             raise ValueError('Invalid branch')
         target = relative(source['destination'])
-        if any(target == other or target in other.parents or other in target.parents for other in targets):
-            raise ValueError('Destinations must not overlap')
+        if any(target in other.parents or other in target.parents for other in targets):
+            raise ValueError('Destinations must not be nested')
         targets.append(target)
         for key in ('include', 'exclude'):
             rules = source.get(key, [])
@@ -78,6 +78,7 @@ def main():
         work = Path(temporary)
         output = work / 'dist'
         output.mkdir()
+        collected = []
         for index, source in enumerate(sources):
             if not source.get('enabled', True):
                 print(f"{source['destination']}: disabled, skipped", flush=True)
@@ -88,12 +89,19 @@ def main():
                 subprocess.run(['git', 'clone', '--depth=1', '--single-branch', '--branch', source['branch'], '--', source['url'], str(checkout)], check=True)
                 staged.mkdir()
                 count = copy_selected(checkout, staged, source['include'], source['exclude'])
-                destination = output / source['destination']
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                staged.rename(destination)
+                collected.append((staged, source['destination']))
                 print(f"{source['destination']}: {count} files", flush=True)
             except (subprocess.CalledProcessError, OSError) as error:
                 print(f"{source['destination']}: failed, skipped: {error}", flush=True)
+        # Merge successful sources sharing a destination. A merge error aborts
+        # before replacing dist; later sources replace files with identical paths.
+        for staged, target in collected:
+            destination = output / target
+            if destination.exists():
+                shutil.copytree(staged, destination, dirs_exist_ok=True)
+            else:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                staged.rename(destination)
         dist = ROOT / 'dist'
         backup = work / 'previous-dist'
         if dist.exists() or dist.is_symlink():

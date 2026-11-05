@@ -29,5 +29,17 @@
     ],
     "exclude": [],
     "enabled": true
+  },
+  {
+    "url": "https://github.com/MetaCubeX/meta-rules-dat.git",
+    "branch": "release",
+    "destination": "meta-rules-dat",
+    "include": [
+      "geoip.dat",
+      "geosite.dat",
+      "country.mmdb"
+    ],
+    "exclude": [],
+    "enabled": true
   }
 ]
