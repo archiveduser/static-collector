@@ -21,23 +21,11 @@ jobs:
       run: bash build.sh
 
     - name: Deploy
+      env:
+        SECRET_ID: ${{ secrets.SECRET_ID }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        COS_BUCKET: ${{ secrets.COS_BUCKET }}
+        COS_REGION: ${{ secrets.COS_REGION }}
       run: |
         pip install https://github.com/tencentyun/coscmd/archive/refs/heads/master.zip
-        echo "[common]" > ~/.cos.conf
-        echo "secret_id = ${{ secrets.SECRET_ID }}" >> ~/.cos.conf
-        echo "secret_key = ${{ secrets.SECRET_KEY }}" >> ~/.cos.conf
-        echo "bucket = ${{ secrets.COS_BUCKET }}" >> ~/.cos.conf
-        echo "region = ${{ secrets.COS_REGION }}" >> ~/.cos.conf
-        echo "max_thread = 5" >> ~/.cos.conf
-        echo "part_size = 1" >> ~/.cos.conf
-        echo "retry = 5" >> ~/.cos.conf
-        echo "timeout = 60" >> ~/.cos.conf
-        echo "schema = https" >> ~/.cos.conf
-        echo "verify = md5" >> ~/.cos.conf
-        echo "anonymous = False" >> ~/.cos.conf
-        if coscmd -b "${{ secrets.COS_BUCKET }}" -r "${{ secrets.COS_REGION }}" upload -rs ./dist/ / >/dev/null 2>&1; then
-          echo "COS upload succeeded."
-        else
-          echo "COS upload failed; detailed output is suppressed to protect the destination URL."
-          exit 1
-        fi
+        python3 deploy.py
