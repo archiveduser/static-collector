@@ -1,0 +1,23 @@
+[
+  {
+    "url": "https://github.com/fanmingming/live.git",
+    "branch": "main",
+    "destination": "fanmingming-live",
+    "include": [
+      "tv",
+      "e.xml"
+    ],
+    "exclude": [],
+    "enabled": false
+  },
+  {
+    "url": "https://github.com/acl4ssr/acl4ssr.git",
+    "branch": "master",
+    "destination": "acl4ssr",
+    "include": [
+      "Clash/Providers/Ruleset"
+    ],
+    "exclude": [],
+    "enabled": true
+  }
+]

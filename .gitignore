@@ -1,0 +1,9 @@
+/dist/*
+/repo/*
+!.gitkeep
+__pycache__/
+/collect-*/
+/test/
+/tests/
+test_*.py
+*_test.py
